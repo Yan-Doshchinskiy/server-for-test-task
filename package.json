@@ -1,0 +1,26 @@
+{
+  "name": "boilerplate",
+  "version": "3.0.0",
+  "engines": {
+    "node": "12.x"
+  },
+  "scripts": {
+    "start": "node server",
+    "build": "cd react-ui/ && yarn install && yarn run build",
+    "dev": "node server && cd client && yarn run start"
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "react-ui/node_modules"
+  ],
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7"
+  },
+  "devDependencies": {},
+  "main": "index.js",
+  "repository": "https://github.com/CallbackAttack/redux-boiler",
+  "author": "yan.doshchinskiy",
+  "license": "MIT",
+  "private": false
+}
