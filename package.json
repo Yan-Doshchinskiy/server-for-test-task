@@ -5,8 +5,8 @@
     "node": "12.x"
   },
   "scripts": {
-    "start": "node server",
-    "build": "cd react-ui/ && yarn install && yarn run build",
+    "start": "cd client && yarn run start",
+    "build": "cd client/ && yarn install && yarn run build",
     "dev": "node server && cd client && yarn run start"
   },
   "cacheDirectories": [
