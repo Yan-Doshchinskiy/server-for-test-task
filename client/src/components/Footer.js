@@ -6,6 +6,7 @@ const Footer = () => {
   return (
     <footer className="mt-auto text-white-50 bg-light p-2 d-flex justify-content-center">
       sdafdasfsdafsdafafsdfdasfFFFFFFFFFFFFFFFFFFF
+      a
       <button
         type="button"
         onClick={() => {
