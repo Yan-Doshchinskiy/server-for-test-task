@@ -1,3 +1,4 @@
+import React from 'react'
 import routes from '../../routes'
 import Logo from './assets/logo.png'
 
