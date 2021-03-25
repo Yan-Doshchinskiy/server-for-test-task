@@ -3,10 +3,10 @@
     "userId": 1,
     "name": "John",
     "phone": "+79511765055",
-    },
+  },
   {
     "userId": 2,
     "name": "Alex",
     "phone": "+79135293366",
-  },
+  }
 ]
