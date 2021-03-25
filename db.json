@@ -2,10 +2,12 @@
   "posts": [
     {
       "id": 1,
-      "title": "hello"
-    }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+      "name": "John",
+      "phone": "+79138622214"
+    },
+    {
+      "id": 2,
+      "name": "Alex",
+      "phone": "+73142226916"
+  ]
 }
