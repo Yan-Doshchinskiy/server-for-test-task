@@ -21,7 +21,11 @@ if (!isDev && cluster.isMaster) {
 } else {
   const app = express()
 
-  app.use(express.static(path.resolve(__dirname, "../client/build")))
+  app.get("/", (req, res) => {
+    res.end(`
+      <div>adsfsdfasd</div>
+    `)
+  })
 
   app.get("/users", function (request, response) {
     response.sendFile(path.resolve(__dirname, "../server", "resp.json"))
