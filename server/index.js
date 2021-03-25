@@ -21,7 +21,7 @@ if (!isDev && cluster.isMaster) {
 } else {
   const app = express()
 
-  app.use(express.static(path.resolve(__dirname, "../client/build")))
+  app.use(express.static(path.resolve(__dirname, "../server/resp.json")))
 
   app.get("/", function (request, response) {
     response.json({ name: "Yan" })
