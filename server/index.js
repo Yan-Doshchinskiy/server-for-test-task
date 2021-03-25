@@ -21,14 +21,10 @@ if (!isDev && cluster.isMaster) {
 } else {
   const app = express()
 
-  app.use(express.static(path.resolve(__dirname, "../server/resp.json")))
+  app.use(express.static(path.resolve(__dirname, "../client/build")))
 
-  app.get("/", function (request, response) {
-    response.json({ name: "Yan" })
-  })
-
-  app.get("/dada", function (request, response) {
-    response.json({name: 'dada'})
+  app.get("/users", function (request, response) {
+    response.sendFile(path.resolve(__dirname, "../server", "resp.json"))
   })
 
   app.listen(PORT, function () {

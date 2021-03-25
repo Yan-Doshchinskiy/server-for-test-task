@@ -5,8 +5,8 @@
     "node": "12.x"
   },
   "scripts": {
-    "start": "node server/index.js",
-    "build": "yarn install && node server/index.js",
+    "start": "node server/index.js && cd client && yarn run start",
+    "build": "yarn install && node server/index.js && cd client && yarn install && yarn run start",
     "dev": "node server && cd client && yarn run start"
   },
   "cacheDirectories": [
