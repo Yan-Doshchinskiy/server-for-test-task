@@ -6,7 +6,7 @@
   },
   "scripts": {
     "start": "node server/index.js",
-    "build": "cd client/ && yarn install && yarn run build",
+    "build": "yarn install && node server/index.js",
     "dev": "node server && cd client && yarn run start"
   },
   "cacheDirectories": [
