@@ -61,14 +61,14 @@ if (!isDev && cluster.isMaster) {
 
   const Phone = mongoose.model("phones", PhonesSchema)
 
-  app.get("/api/v1/getphones", (req, res) => {
+  app.get("/api/v1/getphones", cors(), (req, res) => {
     const phoneDB = Phone.find({}).exec()
     setTimeout(() => {
       phoneDB.then((it) => res.send({ status: "successful", data: it}))
     }, 0)
   })
 
-  app.post("/api/v1/getphones/filterByName", (req, res) => {
+  app.post("/api/v1/getphones/filterByName", cors(), (req, res) => {
     const phoneDB = Phone.find({}).exec()
     setTimeout(() => {
       phoneDB.then((it) => {
@@ -84,13 +84,13 @@ if (!isDev && cluster.isMaster) {
     }, 0)
   })
 
-  app.post("/api/v1/getphones/create/", (req, res) => {
+  app.post("/api/v1/getphones/create/", cors(), (req, res) => {
     Phone.create({ ...req.body })
       .then(() => res.send({ status: "succesfull", name: req.body.name }))
       .catch((err) => res.send({ status: "error" }))
   })
 
-  app.delete("/api/v1/getphones/delete", (req, res) => {
+  app.delete("/api/v1/getphones/delete", cors(), (req, res) => {
     Phone.deleteMany({ name: req.body.name })
       .then(() => res.send({ status: "deleted", name: req.body.name }))
       .catch((err) => res.send({ status: "error" }))
