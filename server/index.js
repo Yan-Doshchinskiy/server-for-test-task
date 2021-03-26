@@ -6,7 +6,6 @@ const numCPUs = require("os").cpus().length
 
 const isDev = process.env.NODE_ENV !== "production"
 const PORT = process.env.PORT || 5000
-const cors = require("cors")
 
 if (!isDev && cluster.isMaster) {
   console.error(`Node cluster master ${process.pid} is running`)
@@ -24,7 +23,6 @@ if (!isDev && cluster.isMaster) {
   const app = express()
 
   app.use(bodyParser())
-  app.use(cors())
 
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
@@ -36,7 +34,6 @@ if (!isDev && cluster.isMaster) {
     next()
   })
 
-  // app.options("/api/v1/getphones/delete", cors())
 
   const mongoose = require("mongoose")
 
@@ -64,14 +61,14 @@ if (!isDev && cluster.isMaster) {
 
   const Phone = mongoose.model("phones", PhonesSchema)
 
-  app.get("/api/v1/getphones", cors(), (req, res) => {
+  app.get("/api/v1/getphones", (req, res) => {
     const phoneDB = Phone.find({}).exec()
     setTimeout(() => {
       phoneDB.then((it) => res.send({ status: "successful", data: it }))
     }, 0)
   })
 
-  app.post("/api/v1/getphones/filterByName", cors(), (req, res) => {
+  app.post("/api/v1/getphones/filterByName", (req, res) => {
     const phoneDB = Phone.find({}).exec()
     setTimeout(() => {
       phoneDB.then((it) => {
@@ -87,18 +84,18 @@ if (!isDev && cluster.isMaster) {
     }, 0)
   })
 
-  app.post("/api/v1/getphones/create/", cors(), (req, res) => {
+  app.post("/api/v1/getphones/create/", (req, res) => {
     Phone.create({ ...req.body })
       .then(() => res.send({ status: "succesfull", name: req.body.name }))
       .catch((err) => res.send({ status: "error" }))
   })
 
-  app.delete("/api/v1/getphones/delete", cors(), (req, res) => {
+  app.delete("/api/v1/getphones/delete", (req, res) => {
     Phone.deleteMany({ name: req.body.name })
       .then(() => res.send({ status: "deleted", name: req.body.name }))
       .catch((err) => res.send({ status: "error" }))
   })
-  app.listen(PORT, cors(), function () {
+  app.listen(PORT, function () {
     console.error(
       `Node ${
         isDev ? "dev server" : "cluster worker " + process.pid
