@@ -38,11 +38,8 @@ if (!isDev && cluster.isMaster) {
     )
     next()
   })
+  app.options("/api/v1/getphones/delete", cors())
 
-
-  app.options("*", function (req, res, next) {
-    res.sendStatus(200)
-  })
 
   const mongoose = require("mongoose")
 
