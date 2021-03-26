@@ -39,13 +39,7 @@ if (!isDev && cluster.isMaster) {
     next()
   })
 
-  app.all("*", function (req, res) {
-    res.status(404).json({
-      response: "error",
-      code: 404,
-      error: "Не найден объект или метод!",
-    })
-  })
+
   app.options("*", function (req, res, next) {
     res.sendStatus(200)
   })
