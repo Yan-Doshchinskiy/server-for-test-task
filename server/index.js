@@ -26,20 +26,28 @@ if (!isDev && cluster.isMaster) {
   app.use(bodyParser())
   app.use(cors())
 
-  app.use((req, res, next) => {
+  app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header(
       "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      "Origin, X-Requested-With, Content-Type, Accept"
     )
-    if (req.method === "OPTIONS" || req.method === "DELETE") {
-      res.header(
-        "Access-Control-Allow-Methods",
-        "PUT, POST, PATCH, DELETE, GET"
-      )
-      return res.status(200).json({})
-    }
+    res.header(
+      "Access-Control-Allow-Methods",
+      "DELETE, PUT, UPDATE, HEAD, OPTIONS, GET, POST"
+    )
     next()
+  })
+
+  app.all("*", function (req, res) {
+    res.status(404).json({
+      response: "error",
+      code: 404,
+      error: "Не найден объект или метод!",
+    })
+  })
+  app.options("*", function (req, res, next) {
+    res.sendStatus(200)
   })
 
   const mongoose = require("mongoose")
