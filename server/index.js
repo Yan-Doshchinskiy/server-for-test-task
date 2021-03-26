@@ -80,7 +80,7 @@ if (!isDev && cluster.isMaster) {
       .catch((err) => res.send({ status: "error" }))
   })
 
-  app.post("/api/v1/getphones/delete", (req, res) => {
+  app.delete("/api/v1/getphones/delete", (req, res) => {
     Phone.deleteMany({ name: req.body.name })
       .then(() => res.send({ status: "deleted", name: req.body.name }))
       .catch((err) => res.send({ status: "error" }))
