@@ -22,7 +22,30 @@ if (!isDev && cluster.isMaster) {
 } else {
   const app = express()
 
-  app.use(bodyParser())
+  const setHeaders = (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE")
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    )
+    next()
+  }
+
+  const middleware = [
+    cors(),
+    express.static(path.resolve(__dirname, "../dist/assets")),
+    bodyParser.urlencoded({
+      limit: "50mb",
+      extended: true,
+      parameterLimit: 50000,
+    }),
+    bodyParser.json({ limit: "50mb", extended: true }),
+    cookieParser(),
+    setHeaders,
+  ]
+
+  middleware.forEach((it) => server.use(it))
 
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
@@ -33,7 +56,6 @@ if (!isDev && cluster.isMaster) {
     )
     next()
   })
-
 
   const mongoose = require("mongoose")
 
