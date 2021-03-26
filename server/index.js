@@ -6,7 +6,7 @@ const numCPUs = require("os").cpus().length
 
 const isDev = process.env.NODE_ENV !== "production"
 const PORT = process.env.PORT || 5000
-const cors = require('cors')
+const cors = require("cors")
 
 if (!isDev && cluster.isMaster) {
   console.error(`Node cluster master ${process.pid} is running`)
@@ -22,18 +22,25 @@ if (!isDev && cluster.isMaster) {
   })
 } else {
   const app = express()
-  app.use((req,res,next) => {
+
+  app.use(bodyParser())
+  app.use(cors())
+
+  app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-    if (req.method === 'OPTIONS') {
-      res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    )
+    if (req.method === "OPTIONS") {
+      res.header(
+        "Access-Control-Allow-Methods",
+        "PUT, POST, PATCH, DELETE, GET"
+      )
       return res.status(200).json({})
     }
     next()
   })
-  app.use(bodyParser())
-  app.use(cors())
-
 
   const mongoose = require("mongoose")
 
@@ -64,7 +71,7 @@ if (!isDev && cluster.isMaster) {
   app.get("/api/v1/getphones", cors(), (req, res) => {
     const phoneDB = Phone.find({}).exec()
     setTimeout(() => {
-      phoneDB.then((it) => res.send({ status: "successful", data: it}))
+      phoneDB.then((it) => res.send({ status: "successful", data: it }))
     }, 0)
   })
 
@@ -78,7 +85,7 @@ if (!isDev && cluster.isMaster) {
             positive = { status: "successful", data: [item] }
           }
         })
-        const negative = { status: "not found"}
+        const negative = { status: "not found" }
         res.send(positive || negative)
       })
     }, 0)
@@ -95,7 +102,7 @@ if (!isDev && cluster.isMaster) {
       .then(() => res.send({ status: "deleted", name: req.body.name }))
       .catch((err) => res.send({ status: "error" }))
   })
-  app.listen(PORT, function () {
+  app.listen(PORT, cors(), function () {
     console.error(
       `Node ${
         isDev ? "dev server" : "cluster worker " + process.pid
