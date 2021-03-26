@@ -29,17 +29,33 @@ if (!isDev && cluster.isMaster) {
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
+      "Access-Control-Allow-Methods",
+      "GET",
+      "PUT",
+      "POST",
+      "DELETE",
+      "OPTIONS"
     )
     res.header(
-      "Access-Control-Allow-Methods",
-      "DELETE, PUT, UPDATE, HEAD, OPTIONS, GET, POST"
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     )
     next()
   })
-  app.options("/api/v1/getphones/delete", cors())
+  // app.use(function (req, res, next) {
+  //   res.header("Access-Control-Allow-Origin", "*")
+  //   res.header(
+  //     "Access-Control-Allow-Headers",
+  //     "Origin, X-Requested-With, Content-Type, Accept"
+  //   )
+  //   res.header(
+  //     "Access-Control-Allow-Methods",
+  //     "DELETE, PUT, UPDATE, HEAD, OPTIONS, GET, POST"
+  //   )
+  //   next()
+  // })
 
+  // app.options("/api/v1/getphones/delete", cors())
 
   const mongoose = require("mongoose")
 
