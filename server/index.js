@@ -6,6 +6,7 @@ const numCPUs = require("os").cpus().length
 
 const isDev = process.env.NODE_ENV !== "production"
 const PORT = process.env.PORT || 5000
+const cors = require('cors')
 
 if (!isDev && cluster.isMaster) {
   console.error(`Node cluster master ${process.pid} is running`)
@@ -22,16 +23,7 @@ if (!isDev && cluster.isMaster) {
 } else {
   const app = express()
   app.use(bodyParser())
-
-  app.get("/", (req, res) => {
-    res.end(`
-      <div>adsfsdfasd</div>
-    `)
-  })
-
-  app.get("/users", function (request, response) {
-    response.sendFile(path.resolve(__dirname, "../server", "resp.json"))
-  })
+  app.use(cors())
 
   const mongoose = require("mongoose")
 
@@ -57,102 +49,42 @@ if (!isDev && cluster.isMaster) {
     },
   })
 
-  const UsersSchema = new mongoose.Schema({
-    name: {
-      type: String,
-      required: true,
-      default: "NoName",
-    },
-    age: {
-      type: Number,
-    },
-    email: {
-      type: String,
-    },
-    car: {
-      type: String,
-    },
-    role: {
-      type: [String],
-      default: ["user"],
-    },
-  })
-
   const Phone = mongoose.model("phones", PhonesSchema)
-  const User = mongoose.model("users", UsersSchema)
 
   app.get("/api/v1/getphones", (req, res) => {
     const phoneDB = Phone.find({}).exec()
     setTimeout(() => {
-      phoneDB.then((it) => res.send(it))
+      phoneDB.then((it) => res.send({ status: "successful", data: it}))
     }, 0)
   })
 
-  app.get("/api/v1/getphones/filterByName", (req, res) => {
+  app.post("/api/v1/getphones/filterByName", (req, res) => {
     const phoneDB = Phone.find({}).exec()
     setTimeout(() => {
       phoneDB.then((it) => {
-        let result
+        let positive
         it.map((item) => {
-          if (item.name === req.body.name) {
-            result = { name: item.name, phone: item.phone }
+          if (item.name.toLowerCase() === req.body.name.toLowerCase()) {
+            positive = { status: "successful", data: [item] }
           }
         })
-        res.send(result || "not found")
+        const negative = { status: "not found"}
+        res.send(positive || negative)
       })
     }, 0)
   })
 
-  app.get("/api/v1/getphones/filterByPhone", (req, res) => {
-    const phoneDB = Phone.find({}).exec()
-    setTimeout(() => {
-      phoneDB.then((it) => {
-        let result
-        it.map((item) => {
-          if (item.phone === req.body.phone) {
-            result = { name: item.name, phone: item.phone }
-          }
-        })
-        res.send(result || "not found")
-      })
-    }, 0)
-  })
-
-  app.get("/api/v1/getusers", (req, res) => {
-    const usersDB = User.find({}).exec()
-    usersDB.then((it) => res.send(it))
-  })
-
-  app.post("/api/v1/getphones/*", (req, res) => {
+  app.post("/api/v1/getphones/create/", (req, res) => {
     Phone.create({ ...req.body })
       .then(() => res.send({ status: "succesfull", name: req.body.name }))
       .catch((err) => res.send({ status: "error" }))
   })
 
-  app.delete("/api/v1/getphones/*", (req, res) => {
+  app.delete("/api/v1/getphones/delete", (req, res) => {
     Phone.deleteMany({ name: req.body.name })
       .then(() => res.send({ status: "deleted", name: req.body.name }))
       .catch((err) => res.send({ status: "error" }))
   })
-
-  // app.get("/api/v1/getusers/new", (req, res) => {
-  //   User.create(
-  //     {
-  //       name: "hah2",
-  //       age: 28,
-  //       email: "hah2@gmail.com",
-  //       car: "Nissan",
-  //       role: ["support"],
-  //     },
-  //     (err) => {
-  //       if (err) {
-  //         console.log(err)
-  //       }
-  //     }
-  //   )
-  //   usersDB.then((it) => res.send(it))
-  // })
-
   app.listen(PORT, function () {
     console.error(
       `Node ${
