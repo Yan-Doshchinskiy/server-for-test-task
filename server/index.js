@@ -32,7 +32,7 @@ if (!isDev && cluster.isMaster) {
       "Access-Control-Allow-Headers",
       "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     )
-    if (req.method === "OPTIONS") {
+    if (req.method === "OPTIONS" || req.method === "DELETE") {
       res.header(
         "Access-Control-Allow-Methods",
         "PUT, POST, PATCH, DELETE, GET"
