@@ -32,20 +32,7 @@ if (!isDev && cluster.isMaster) {
     next()
   }
 
-  const middleware = [
-    cors(),
-    express.static(path.resolve(__dirname, "../dist/assets")),
-    bodyParser.urlencoded({
-      limit: "50mb",
-      extended: true,
-      parameterLimit: 50000,
-    }),
-    bodyParser.json({ limit: "50mb", extended: true }),
-    cookieParser(),
-    setHeaders,
-  ]
-
-  middleware.forEach((it) => server.use(it))
+  server.use(setHeaders())
 
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
