@@ -82,63 +82,56 @@ if (!isDev && cluster.isMaster) {
       type: String,
       required: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
+    nickname: {
+      type: String,
+      required: true,
+    },
     token: { type: String, required: false },
   });
 
-  const Phone = mongoose.model("phones", PhonesSchema);
   const User = mongoose.model("users", UserSchema);
 
-  app.get("/api/v1/checkEmail", (req, res) => {
-    const usersDB = User.find({}).exec();
-    usersDB
-      .then((it) => {
-        it.find((item) => {
-          if (item.email.toLowerCase() === req.query.email.toLowerCase()) {
-            res.send({
-              status: "successful",
-              data: req.query.email,
-              message: `${req.query.email} is already registered`,
-              registered: true,
-            });
-          }
-        });
-        res.send({
-          status: "successful",
-          data: null,
-          message: `${req.query.email} not found in the database`,
-          registered: false,
-        });
-      })
-      .catch((err) => res.send({ status: "error", error: err }));
-  });
-
   app.post("/api/v1/register/", (req, res) => {
-    if (!req.body.email) {
-      res.status(422).json({ status: 400, message: "email was not sent" });
-    }
-    if (!req.body.password) {
-      res.status(422).json({ status: 400, message: "passward was not sent" });
-    }
-    const hashPassword = bcrypt.hashSync(req.body.password, 10);
-    User.create({ email: req.body.email.toLowerCase(), password: hashPassword })
-      .then(() =>
-        res.send({
-          status: "successful",
-          email: req.body.email.toLowerCase(),
-          message: "registration completed",
-        })
-      )
-      .catch((err) => res.send({ status: "error", error: err }));
+    User.findOne({
+      email: req.body.email.toLowerCase(),
+    })
+      .exec()
+      .then((it) => {
+        if (!it) {
+          const hashPassword = bcrypt.hashSync(req?.body?.password, 10);
+          User.create({
+            email: req?.body?.email.toLowerCase(),
+            password: hashPassword,
+            name: req?.body?.firstName,
+            nickname: req?.body?.nickname,
+          })
+            .then(() =>
+              res.status(200).json({
+                email: req?.body?.email.toLowerCase(),
+                success: true,
+                data: {
+                  status: "successful",
+                  message: "registration completed",
+                },
+              })
+            )
+            .catch((err) =>
+              res.status(422).json({ status: "error", error: err })
+            );
+        } else {
+          res.status(422).json({
+            status: "error",
+            message: `${req?.body?.email} is already registered`,
+          });
+        }
+      });
   });
 
   app.post("/api/v1/login", (req, res) => {
-    if (!req.body.email) {
-      res.send({ status: "error", message: "email was not sent" });
-    }
-    if (!req.body.password) {
-      res.send({ status: "error", message: "password was not sent" });
-    }
-
     User.findOne({ email: req.body.email.toLowerCase() })
       .exec()
       .then((user) => {
@@ -158,24 +151,35 @@ if (!isDev && cluster.isMaster) {
                 }
               }
             );
-            res.send({
-              status: "successful",
-              message: `you are logged in`,
-              token: token,
+            res.status(200).json({
+              success: true,
+              data: {
+                email: req?.body?.email.toLowerCase(),
+                status: "successful",
+                message: `you are logged in`,
+                token: token,
+              },
             });
           } else {
-            res.send({
+            res.status(422).json({
               status: "error",
               message: `invalid password`,
             });
           }
         } else {
-          res.send({
+          res.status(422).json({
             status: "error",
             message: `${req.body.email} not found in the database`,
           });
         }
       })
-      .catch((err) => res.send({ status: "error", error: err }));
+      .catch((err) => res.status(422).json({ status: "error", error: err }));
+  });
+  app.listen(PORT, function () {
+    console.error(
+      `Node ${
+        isDev ? "dev server" : "cluster worker " + process.pid
+      }: listening on port ${PORT}`
+    );
   });
 }
