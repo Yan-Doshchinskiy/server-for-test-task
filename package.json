@@ -21,7 +21,9 @@
     "mongoose": "^5.12.2",
     "nodemon": "^2.0.7"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ws": "^7.5.0"
+  },
   "main": "index.js",
   "repository": "https://github.com/CallbackAttack/redux-boiler",
   "author": "yan.doshchinskiy",

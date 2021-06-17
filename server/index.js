@@ -6,6 +6,7 @@ const numCPUs = require("os").cpus().length;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./config");
+const WebSocket = require("ws");
 // const { check } = require("express-validator");
 // const { body, validationResult } = require("express-validator/check");
 // const { sanitizeBody } = require("express-validator/filter");
@@ -35,7 +36,22 @@ if (!isDev && cluster.isMaster) {
   });
 } else {
   const app = express();
+  const server = new WebSocket.Server({ port: 1000 });
 
+  server.on("connection", (ws) => {
+    ws.on("message", (message) => {
+      server.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          const messageWithDate = JSON.stringify({
+            ...JSON.parse(message),
+            date: new Date(),
+          });
+          client.send(messageWithDate);
+        }
+      });
+    });
+    ws.send("Добро пожаловать в Chat");
+  });
   app.use(bodyParser());
 
   app.use(function (req, res, next) {
@@ -61,17 +77,6 @@ if (!isDev && cluster.isMaster) {
     .then(() => console.log("MongoDB connected"))
     .catch((err) => console.log("Connection error - ", err));
 
-  const PhonesSchema = new mongoose.Schema({
-    name: {
-      type: String,
-      required: true,
-    },
-    phone: {
-      type: String,
-      required: true,
-    },
-  });
-
   const UserSchema = new mongoose.Schema({
     email: {
       type: String,
@@ -93,7 +98,26 @@ if (!isDev && cluster.isMaster) {
     token: { type: String, required: false },
   });
 
+  const GlobalChatSchema = new mongoose.Schema({
+    nickname: {
+      type: String,
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    userID: {
+      type: String,
+    },
+  });
+
   const User = mongoose.model("users", UserSchema);
+  const GlobalChat = mongoose.model("global_chats", GlobalChatSchema);
 
   app.post("/api/v1/register/", (req, res) => {
     User.findOne({
@@ -169,7 +193,94 @@ if (!isDev && cluster.isMaster) {
         } else {
           res.status(422).json({
             status: "error",
-            message: `${req.body.email} not found in the database`,
+            message: `${req?.body?.email} not found in the database`,
+          });
+        }
+      })
+      .catch((err) => res.status(422).json({ status: "error", error: err }));
+  });
+
+  app.get("/api/v1/getGlobalChat/", (req, res) => {
+    GlobalChat.find({})
+      .exec()
+      .then((it) => {
+        res.status(200).json({
+          success: true,
+          data: it,
+        });
+      })
+      .catch((err) => res.status(422).json({ status: "error", error: err }));
+  });
+
+  app.post("/api/v1/addGlobalMessage/", (req, res) => {
+    const token = req?.headers?.authorization.replace(/^Bearer\s+/, "");
+    User.findOne({ token: token })
+      .exec()
+      .then((it) => {
+        if (!it) {
+          res.status(401).json({
+            success: false,
+            data: {
+              message: "Unauthorized",
+            },
+          });
+        } else {
+          if (JSON.stringify(it._id) === JSON.stringify(req?.body?.userID)) {
+            GlobalChat.create({
+              userID: req?.body?.userID,
+              nickname: req?.body?.nickname,
+              message: req?.body?.message,
+              date: new Date(),
+            })
+              .then((it) => {
+                res.status(200).json({
+                  success: true,
+                  data: {
+                    id: it._id,
+                    nickname: it?.nickname,
+                    message: it?.message,
+                    date: it?.date,
+                    userID: it?.userID,
+                  },
+                });
+              })
+              .catch((err) =>
+                res.status(422).json({ status: "error", error: err })
+              );
+          } else {
+            res.status(401).json({
+              success: false,
+              data: {
+                message: "Unauthorized",
+              },
+            });
+          }
+        }
+      })
+      .catch((err) => res.status(422).json({ status: "error", error: err }));
+  });
+
+  app.get("/api/v1/getProfileData", (req, res) => {
+    const token = req?.headers?.authorization.replace(/^Bearer\s+/, "");
+    User.findOne({ token: token })
+      .exec()
+      .then((it) => {
+        if (!it) {
+          res.status(401).json({
+            success: false,
+            data: {
+              message: "Unauthorized",
+            },
+          });
+        } else {
+          res.status(200).json({
+            success: true,
+            data: {
+              id: it._id,
+              email: it.email,
+              name: it.name,
+              nickname: it.nickname,
+            },
           });
         }
       })
