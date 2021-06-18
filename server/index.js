@@ -36,7 +36,7 @@ if (!isDev && cluster.isMaster) {
   });
 } else {
   const app = express();
-  const server = new WebSocket.Server({ port: process.env.WB_PORT || 1000 });
+  const server = new WebSocket.Server({ port: 1000 });
 
   app.use(bodyParser());
 
