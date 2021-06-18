@@ -25,6 +25,7 @@
     "ws": "^7.5.0"
   },
   "main": "index.js",
+  "repository": "https://github.com/Yan-Doshchinskiy/server-for-test-task",
   "author": "yan.doshchinskiy",
   "license": "MIT",
   "private": false
