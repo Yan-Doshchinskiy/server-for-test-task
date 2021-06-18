@@ -39,5 +39,6 @@ server.listen(port, function (err) {
   if (err) {
     throw err;
   }
+  console.log(`wss`, wss?.port);
   console.log(`listening on port ${port}!`);
 });
