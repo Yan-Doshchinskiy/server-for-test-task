@@ -7,6 +7,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./config");
 const WebSocket = require("ws");
+const cors = require("cors");
 // const { check } = require("express-validator");
 // const { body, validationResult } = require("express-validator/check");
 // const { sanitizeBody } = require("express-validator/filter");
@@ -37,7 +38,7 @@ if (!isDev && cluster.isMaster) {
 } else {
   const app = express();
   // const server = new WebSocket.Server({ port: 1000 });
-
+  app.use(cors()); // <---- use cors middleware
   app.use(bodyParser());
 
   app.use(function (req, res, next) {
