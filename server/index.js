@@ -36,7 +36,7 @@ if (!isDev && cluster.isMaster) {
   });
 } else {
   const app = express();
-  const server = new WebSocket.Server({ port: 1000 });
+  const server = new WebSocket.Server({ port: process.env.WB_PORT || 1000 });
 
   app.use(bodyParser());
 
@@ -80,8 +80,9 @@ if (!isDev && cluster.isMaster) {
     nickname: {
       type: String,
       required: true,
+      unique: true,
     },
-    token: { type: String, required: false },
+    token: { type: String, required: false, unique: true },
     onlineStatus: {
       type: String,
     },
@@ -101,6 +102,9 @@ if (!isDev && cluster.isMaster) {
       required: true,
     },
     userID: {
+      type: String,
+    },
+    status: {
       type: String,
     },
   });
@@ -126,9 +130,8 @@ if (!isDev && cluster.isMaster) {
         }
         // set offline user status in DB
         if (JSON.parse(message).type === "disonnection") {
-          const token = JSON.parse(message).token.replace(/^Bearer\s+/, "");
           User.updateOne(
-            { token: token },
+            { email: JSON.parse(message).email },
             { onlineStatus: JSON.parse(message).message },
             function (err) {
               if (err) {
@@ -144,7 +147,6 @@ if (!isDev && cluster.isMaster) {
         ) {
           const messageWithDate = JSON.stringify({
             ...JSON.parse(message),
-            date: new Date(),
           });
           client.send(messageWithDate);
         }
@@ -262,7 +264,8 @@ if (!isDev && cluster.isMaster) {
               userID: req?.body?.userID,
               nickname: req?.body?.nickname,
               message: req?.body?.message,
-              date: new Date(),
+              date: req?.body?.date,
+              status: "Success",
             })
               .then((it) => {
                 res.status(200).json({
