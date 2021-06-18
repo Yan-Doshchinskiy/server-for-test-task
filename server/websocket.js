@@ -13,4 +13,3 @@ server.on("connection", (ws) => {
   });
   ws.send("Добро пожаловать в Chat");
 });
-server.listen(PORT, () => console.log("Server started on " + PORT));

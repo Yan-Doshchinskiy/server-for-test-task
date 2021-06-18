@@ -1,31 +1,24 @@
 {
-  "name": "chat_server",
+  "name": "chat_app",
   "version": "3.0.0",
   "engines": {
     "node": "14.x"
   },
   "scripts": {
-    "start": "node server/websocket.js"
+    "start": "node server/index.js"
   },
   "cacheDirectories": [
     "node_modules",
     "client/node_modules"
   ],
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "express-validator": "^6.11.1",
-    "heroku": "^7.54.1",
-    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.2",
-    "nodemon": "^2.0.7",
-    "ws": "^7.5.0"
+    "nodemon": "^2.0.7"
   },
-  "devDependencies": {
-    "ws": "^7.5.0"
-  },
+  "devDependencies": {},
   "main": "index.js",
   "repository": "https://github.com/Yan-Doshchinskiy/server-for-test-task",
   "author": "yan.doshchinskiy",
