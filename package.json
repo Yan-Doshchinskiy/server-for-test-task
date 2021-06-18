@@ -5,16 +5,18 @@
     "node": "14.x"
   },
   "scripts": {
-    "start": "node server/websocket.js"
+    "start": "node server/index.js"
   },
   "cacheDirectories": [
     "node_modules",
     "client/node_modules"
   ],
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.2",
     "nodemon": "^2.0.7",
     "ws": "^7.5.0"
