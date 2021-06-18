@@ -12,5 +12,3 @@ server.on("connection", (ws) => {
   });
   ws.send("Добро пожаловать в Chat");
 });
-
-console.log("server.options.port", server.options.port);
