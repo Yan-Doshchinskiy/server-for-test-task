@@ -38,20 +38,6 @@ if (!isDev && cluster.isMaster) {
   const app = express();
   const server = new WebSocket.Server({ port: 1000 });
 
-  server.on("connection", (ws) => {
-    ws.on("message", (message) => {
-      server.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          const messageWithDate = JSON.stringify({
-            ...JSON.parse(message),
-            date: new Date(),
-          });
-          client.send(messageWithDate);
-        }
-      });
-    });
-    ws.send("Добро пожаловать в Chat");
-  });
   app.use(bodyParser());
 
   app.use(function (req, res, next) {
@@ -96,6 +82,9 @@ if (!isDev && cluster.isMaster) {
       required: true,
     },
     token: { type: String, required: false },
+    onlineStatus: {
+      type: String,
+    },
   });
 
   const GlobalChatSchema = new mongoose.Schema({
@@ -119,6 +108,49 @@ if (!isDev && cluster.isMaster) {
   const User = mongoose.model("users", UserSchema);
   const GlobalChat = mongoose.model("global_chats", GlobalChatSchema);
 
+  server.on("connection", (ws) => {
+    ws.on("message", (message) => {
+      server.clients.forEach((client) => {
+        // set online user status in DB
+        if (JSON.parse(message).type === "connection") {
+          const token = JSON.parse(message).token.replace(/^Bearer\s+/, "");
+          User.updateOne(
+            { token: token },
+            { onlineStatus: JSON.parse(message).message },
+            function (err) {
+              if (err) {
+                console.log(err);
+              }
+            }
+          );
+        }
+        // set offline user status in DB
+        if (JSON.parse(message).type === "disonnection") {
+          const token = JSON.parse(message).token.replace(/^Bearer\s+/, "");
+          User.updateOne(
+            { token: token },
+            { onlineStatus: JSON.parse(message).message },
+            function (err) {
+              if (err) {
+                console.log(err);
+              }
+            }
+          );
+        }
+        if (
+          client.readyState === WebSocket.OPEN &&
+          JSON.parse(message).type !== "connection" &&
+          JSON.parse(message).type !== "disonnection"
+        ) {
+          const messageWithDate = JSON.stringify({
+            ...JSON.parse(message),
+            date: new Date(),
+          });
+          client.send(messageWithDate);
+        }
+      });
+    });
+  });
   app.post("/api/v1/register/", (req, res) => {
     User.findOne({
       email: req.body.email.toLowerCase(),
