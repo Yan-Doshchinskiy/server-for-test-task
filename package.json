@@ -1,5 +1,5 @@
 {
-  "name": "chat server",
+  "name": "chat_server",
   "version": "3.0.0",
   "engines": {
     "node": "14.x"
