@@ -1,5 +1,5 @@
 {
-  "name": "boilerplate",
+  "name": "chat server",
   "version": "3.0.0",
   "engines": {
     "node": "14.x"
@@ -25,7 +25,6 @@
     "ws": "^7.5.0"
   },
   "main": "index.js",
-  "repository": "https://github.com/CallbackAttack/redux-boiler",
   "author": "yan.doshchinskiy",
   "license": "MIT",
   "private": false
