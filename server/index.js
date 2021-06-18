@@ -6,7 +6,7 @@ const numCPUs = require("os").cpus().length;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./config");
-// const WebSocket = require("ws");
+const WebSocket = require("ws");
 // const { check } = require("express-validator");
 // const { body, validationResult } = require("express-validator/check");
 // const { sanitizeBody } = require("express-validator/filter");
@@ -36,7 +36,7 @@ if (!isDev && cluster.isMaster) {
   });
 } else {
   const app = express();
-  // const server = new WebSocket.Server({ port: process.env.WB_PORT || 1000 });
+  const server = new WebSocket.Server({ port: process.env.WB_PORT || 1000 });
 
   app.use(bodyParser());
 
