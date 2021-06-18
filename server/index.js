@@ -37,7 +37,7 @@ if (!isDev && cluster.isMaster) {
   });
 } else {
   const app = express();
-  // const server = new WebSocket.Server({ port: 1000 });
+  const server = new WebSocket.Server({ port: 1000 });
   app.use(cors()); // <---- use cors middleware
   app.use(bodyParser());
 
