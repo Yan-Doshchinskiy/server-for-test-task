@@ -8,10 +8,6 @@ const jwt = require("jsonwebtoken");
 const { secret } = require("./config");
 const cors = require("cors");
 
-// const { check } = require("express-validator");
-// const { body, validationResult } = require("express-validator/check");
-// const { sanitizeBody } = require("express-validator/filter");
-console.log("key", process.env.SECRET_KEY);
 const generateAccessToken = (id, email) => {
   const payload = {
     id,
