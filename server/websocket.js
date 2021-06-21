@@ -13,18 +13,18 @@
 //   ws.send("Добро пожаловать в Chat");
 // });
 
-// const { Server } = require("ws");
-// const express = require("express");
+const { Server } = require("ws");
+const express = require("express");
 
-// const PORT = process.env.PORT || 1000;
+const PORT = process.env.PORT || 1000;
 
-// const server = express().listen(PORT, () =>
-//   console.log(`Listening on ${PORT}`)
-// );
-// const wss = new Server({ server });
+const server = express().listen(PORT, () =>
+  console.log(`Listening on ${PORT}`)
+);
+const wss = new Server({ server });
 
-// wss.on("connection", (ws) => {
-//   console.log("Client connected");
-//   ws.on("close", () => console.log("Client disconnected"));
-//   ws.send("Добро пожаловать в Chat");
-// });
+wss.on("connection", (ws) => {
+  console.log("Client connected");
+  ws.on("close", () => console.log("Client disconnected"));
+  ws.send("Добро пожаловать в Chat");
+});
