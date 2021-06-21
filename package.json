@@ -5,7 +5,7 @@
     "node": "14.x"
   },
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node server/websocket.js"
   },
   "cacheDirectories": [
     "node_modules",
