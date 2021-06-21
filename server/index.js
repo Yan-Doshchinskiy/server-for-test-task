@@ -7,7 +7,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./config");
 const cors = require("cors");
-const { Server } = require("ws");
 
 // const { check } = require("express-validator");
 // const { body, validationResult } = require("express-validator/check");
@@ -23,7 +22,6 @@ const generateAccessToken = (id, email) => {
 
 const isDev = process.env.NODE_ENV !== "production";
 const PORT = process.env.PORT || 5000;
-const WS_PORT = process.env.WS_PORT || 1000;
 
 if (!isDev && cluster.isMaster) {
   console.error(`Node cluster master ${process.pid} is running`);
@@ -39,11 +37,6 @@ if (!isDev && cluster.isMaster) {
   });
 } else {
   const app = express();
-  const server = express().listen(WS_PORT, () =>
-    console.log(`WS listening on ${WS_PORT}`)
-  );
-  const wss = new Server({ server });
-
   app.use(cors()); // <---- use cors middleware
   app.use(bodyParser());
 
@@ -118,53 +111,6 @@ if (!isDev && cluster.isMaster) {
 
   const User = mongoose.model("users", UserSchema);
   const GlobalChat = mongoose.model("global_chats", GlobalChatSchema);
-
-  wss.on("connection", (ws) => {
-    console.log("Client connected");
-    ws.on("close", () => console.log("Client disconnected"));
-    ws.send("Добро пожаловать в Chat");
-  });
-  // server.on("connection", (ws) => {
-  //   ws.on("message", (message) => {
-  //     server.clients.forEach((client) => {
-  //       // set online user status in DB
-  //       if (JSON.parse(message).type === "connection") {
-  //         const token = JSON.parse(message).token.replace(/^Bearer\s+/, "");
-  //         User.updateOne(
-  //           { token: token },
-  //           { onlineStatus: JSON.parse(message).message },
-  //           function (err) {
-  //             if (err) {
-  //               console.log(err);
-  //             }
-  //           }
-  //         );
-  //       }
-  //       // set offline user status in DB
-  //       if (JSON.parse(message).type === "disonnection") {
-  //         User.updateOne(
-  //           { email: JSON.parse(message).email },
-  //           { onlineStatus: JSON.parse(message).message },
-  //           function (err) {
-  //             if (err) {
-  //               console.log(err);
-  //             }
-  //           }
-  //         );
-  //       }
-  //       if (
-  //         client.readyState === WebSocket.OPEN &&
-  //         JSON.parse(message).type !== "connection" &&
-  //         JSON.parse(message).type !== "disonnection"
-  //       ) {
-  //         const messageWithDate = JSON.stringify({
-  //           ...JSON.parse(message),
-  //         });
-  //         client.send(messageWithDate);
-  //       }
-  //     });
-  //   });
-  // });
 
   app.post("/api/v1/register/", (req, res) => {
     User.findOne({
